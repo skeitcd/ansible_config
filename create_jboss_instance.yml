@@ -1,0 +1,32 @@
+# Create unix instance for jboss
+---
+- hosts: local
+  gather_facts: False
+
+  vars_files:
+    - /home/cristhian/ansible_config/vars/vars.yml
+    - /home/cristhian/ansible_config/vars/vault.yml
+
+  vars:
+    key_pair: aws_key_test
+    instance_type:  t2.micro
+    security_group: sg-de0705ad
+    image: ami-8c1be5f6
+    region: us-east-1
+
+  tasks:
+    - name: Launch instance
+      ec2:
+         aws_access_key: "{{ aws_access_key }}"
+         aws_secret_key: "{{ aws_secret_key }}"
+         key_name: "{{ key_pair }}"
+         instance_type: "{{ instance_type }}"
+         image: "{{ image }}"
+         wait: yes
+         region: "{{ region }}"
+         wait_timeout: 500
+         group_id: "{{ security_group }}"
+         count: 1
+         vpc_subnet_id: subnet-0ff37b23
+         assign_public_ip: yes
+      register: ec2
